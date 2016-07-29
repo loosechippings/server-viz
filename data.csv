@@ -1,0 +1,11 @@
+host,app,service,heap
+server1,app1,serviceA,100000
+server1,app2,serviceA,200000
+server2,app1,anotherService,50000
+server2,app2,serviceA,100000
+server1,app3,testThing,500
+server3,app3,thingThing,1000
+server1,app3,important,2000
+server1,app3,broken,500
+server2,app4,bigOne,50000
+server3,app5,singleone,100000
