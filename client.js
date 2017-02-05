@@ -12,29 +12,50 @@ var hostDataReady=new Promise(function (resolve,reject) {
   d3.csv("hosts.csv",resolve);
 });
 
-Promise.all([appDataReady,hostDataReady]).then(function(data) {
-  viz(data[0],data[1]);
-});
+Promise
+  .all([appDataReady,hostDataReady])
+  .then(function(data) {
+    viz(data[0],data[1]);
+  });
 
 function viz(rawAppData,hostData) {
   var width=800;
   var height=700;
   var hosts=[];
-  hostData.forEach(function(d) {hosts.push(d.hostname)});
+  var appNames=[];
+
+  hostData.forEach(function(d) {
+    hosts.push(d.hostname)
+  });
 
   var appData=d3.nest()
     .key(function(d) {return d.app})
     .key(function(d) {return d.service})
     .entries(rawAppData);
 
-  var apps=d3.nest().key(function(d) {return d.app}).entries(rawAppData);
-  var appNames=[];
-  apps.forEach(function(d) {appNames.push(d.key)});
+  var apps=d3.nest()
+    .key(function(d) {
+      return d.app
+    })
+  .entries(rawAppData);
 
-  d3.select("body").append("svg").attr("width",width).attr("height",height);
+  apps.forEach(function(d) {
+    appNames.push(d.key)
+  });
 
-  var colScale=d3.scaleBand().domain(hosts).range([0,width]).padding(0.1);
-  var rowScale=d3.scaleBand().domain(appNames).range([0,height]).padding(0.1);
+  d3.select("body")
+    .append("svg")
+    .attr("width",width)
+    .attr("height",height);
+
+  var colScale=d3.scaleBand()
+    .domain(hosts)
+    .range([0,width])
+    .padding(0.1);
+  var rowScale=d3.scaleBand()
+    .domain(appNames)
+    .range([0,height])
+    .padding(0.1);
   
   var serverGroups=d3.select("svg")
     .append("g")
@@ -46,7 +67,9 @@ function viz(rawAppData,hostData) {
 
   serverGroups
     .append("rect")
-    .attr("width",function(d) {return colScale.bandwidth()})
+    .attr("width",function(d) {
+      return colScale.bandwidth()
+    })
     .attr("height",height)
     .classed("serverG",true)
 
@@ -56,7 +79,8 @@ function viz(rawAppData,hostData) {
     .attr("y",20)
     .classed("serverText",true);
 
-  var appGroups=d3.select(".rootGroup").selectAll(".appG")
+  var appGroups=d3.select(".rootGroup")
+    .selectAll(".appG")
     .data(appData)
     .enter()
     .append("g")
